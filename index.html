@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Y8 Mitre Joint Quiz</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #8B5CF6, #D946EF);
+            color: #fff;
+        }
+
+        .quiz-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 10px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .question {
+            font-size: 1.8em;
+            margin-bottom: 10px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            padding: 14px 20px;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+
+        button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .correct {
+            background: #00FF00 !important;
+            color: #000 !important;
+            font-weight: bold;
+            box-shadow: 0 0 15px rgba(0, 205, 0, 0.7);
+        }
+
+        .incorrect {
+            background: #FF0000 !important;
+            color: #FFF !important;
+            font-weight: bold;
+            box-shadow: 0 0 15px rgba(205, 0, 0, 0.7);
+        }
+
+        #nextBtn {
+            display: none;
+            margin-top: 10px;
+            background: rgba(255, 255, 255, 0.4);
+            font-weight: bold;
+            font-size: 1em;
+            padding: 10px 20px;
+            border-radius: 6px;
+            color: #fff;
+        }
+
+        .progress-bar {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        .progress-section {
+            flex: 1;
+            margin: 0 5px;
+            color: #ccc;
+        }
+
+        .progress-title {
+            text-align: left;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .progress-indicators {
+            display: flex;
+            justify-content: flex-start;
+        }
+
+        .indicator {
+            width: 12px;
+            height: 12px;
+            background-color: #ccc;
+            margin: 0 1.5px;
+            border-radius: 50%;
+            box-sizing: border-box;
+            cursor: pointer;
+        }
+
+        .indicator.correct {
+            background-color: #00FF00;
+        }
+
+        .indicator.incorrect {
+            background-color: #FF0000;
+        }
+
+        .indicator.current {
+            border: 2px solid white;
+        }
+
+        .result {
+            display: none;
+            font-size: 2.5em;
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="quiz-container">
+        <div class="progress-bar">
+            <div class="progress-indicators" id="progress-indicators"></div>
+        </div>
+        <div id="question-container">
+            <p class="question" id="question">Loading question...</p>
+            <div class="options" id="options-container"></div>
+        </div>
+        <button id="nextBtn" onclick="nextQuestion()">Next Question</button>
+        <div class="result" id="result">🎤🎸 Great job! You completed the Mitre Joint quiz!</div>
+    </div>
+
+    <script>
+        const questions = [
+            { question: "🖼️ We do _____ joints for our photo frame project.", options: ["Butt", "Mitre", "Finger"], answer: "Mitre" },
+            { question: "📐 We cut two pieces of wood at ____ degree angle to make the mitre joint.", options: ["45", "30", "60"], answer: "45" },
+            { question: "✏️ We mark the 45-degree angle cut line with a ______.", options: ["Pen", "Pencil", "Marker"], answer: "Pencil" },
+            { question: "The 45-degree angled pieces will form a ____ degree angled corner.", options: ["180", "90", "60"], answer: "90" },
+            { question: "Mitre joint _____ end grain shown.", options: ["Has no", "Has"], answer: "Has no" },
+            { question: "🪚 Mitre joint is easy to make, easier than ____.", options: ["Butt joint", "Finger joint"], answer: "Finger joint" },
+            { question: "📏 Mitre joint needs to be accurate with the angle. It's less easy to make than ____.", options: ["Butt joint", "Finger joint"], answer: "Butt joint" },
+            { question: "🖼️ Mitre joint is used often for ____.", options: ["Only photo frames", "Only window frames", "Only frames", "Only tables", "Only boxes", "All of the above"], answer: "All of the above" },
+            { question: "We put the pieces into a ____ to help cut 45-degree angles accurately.", options: ["Jug", "Jig", "Jar"], answer: "Jig" },
+            { question: "We clamp the jig with ______.", options: ["Clamps", "Tenon saw", "Hammer", "Stapler"], answer: "Clamps" },
+            { question: "🪚 We start cutting ______ to make a narrow dent first.", options: ["Slowly", "Quickly"], answer: "Slowly" },
+            { question: "We use as ____ length as possible of the blade to cut.", options: ["Little", "Much"], answer: "Much" },
+            { question: "We use _____ to glue the pieces.", options: ["PVA", "Water", "Gluesticks"], answer: "PVA" }
+        ];
+
+        let currentQuestionIndex = 0;
+        let quizContainer = document.getElementById("question-container");
+        let questionElement = document.getElementById("question");
+        let optionsContainer = document.getElementById("options-container");
+        let nextBtn = document.getElementById("nextBtn");
+        let progressIndicators = document.getElementById("progress-indicators");
+        let resultElement = document.getElementById("result");
+
+        function loadQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            questionElement.textContent = currentQuestion.question;
+            optionsContainer.innerHTML = ""; // Clear previous options
+
+            currentQuestion.options.forEach(option => {
+                const optionElement = document.createElement("button");
+                optionElement.classList.add("option");
+                optionElement.textContent = option;
+                optionElement.addEventListener("click", () => checkAnswer(optionElement, option));
+                optionsContainer.appendChild(optionElement);
+            });
+
+            updateProgress();
+        }
+
+        function updateProgress() {
+            progressIndicators.innerHTML = "";
+            for (let i = 0; i < questions.length; i++) {
+                const indicator = document.createElement("div");
+                indicator.classList.add("indicator");
+                if (i < currentQuestionIndex) {
+                    indicator.classList.add("correct");
+                } else if (i === currentQuestionIndex) {
+                    indicator.classList.add("current");
+                }
+                progressIndicators.appendChild(indicator);
+            }
+        }
+
+        function checkAnswer(optionElement, selectedOption) {
+            const currentQuestion = questions[currentQuestionIndex];
+            if (selectedOption === currentQuestion.answer) {
+                optionElement.classList.add("correct");
+                nextBtn.style.display = "block";
+            } else {
+                optionElement.classList.add("incorrect");
+            }
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                loadQuestion();
+                nextBtn.style.display = "none";
+            } else {
+                showResult();
+            }
+        }
+
+        function showResult() {
+            quizContainer.style.display = "none"; // Hide quiz
+            resultElement.style.display = "block"; // Show result
+        }
+
+        window.onload = loadQuestion;
+    </script>
+
+</body>
+</html>
